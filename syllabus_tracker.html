@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Syllabus Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: #0f1520;
+    --surface2: #151d2e;
+    --border: #1e2d45;
+    --border2: #243352;
+    --text: #cdd5e0;
+    --text-muted: #5a6a82;
+    --text-dim: #3a4d66;
+
+    --ph: #38bdf8;
+    --ph-bg: rgba(56,189,248,0.07);
+    --ph-border: rgba(56,189,248,0.2);
+    --ch: #4ade80;
+    --ch-bg: rgba(74,222,128,0.07);
+    --ch-border: rgba(74,222,128,0.2);
+    --en: #fb923c;
+    --en-bg: rgba(251,146,60,0.07);
+    --en-border: rgba(251,146,60,0.2);
+
+    --r1: #ef4444;
+    --r1-bg: rgba(239,68,68,0.12);
+    --r2: #f97316;
+    --r2-bg: rgba(249,115,22,0.12);
+    --r3: #eab308;
+    --r3-bg: rgba(234,179,8,0.12);
+    --r4: #84cc16;
+    --r4-bg: rgba(132,204,22,0.12);
+    --r5: #22c55e;
+    --r5-bg: rgba(34,197,94,0.12);
+
+    --accent: #38bdf8;
+    --accent-bg: rgba(56,189,248,0.07);
+
+    --radius: 6px;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 14px; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    background-image: radial-gradient(ellipse at 20% 0%, rgba(56,189,248,0.03) 0%, transparent 50%),
+                      radial-gradient(ellipse at 80% 100%, rgba(74,222,128,0.03) 0%, transparent 50%);
+  }
+
+  /* === HEADER === */
+  #header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,12,20,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+
+  #header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 56px;
+  }
+
+  #logo {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  #logo span {
+    color: var(--accent);
+  }
+
+  #subject-tabs {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .subject-tab {
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text-muted);
+    background: transparent;
+  }
+
+  .subject-tab:hover { color: var(--text); background: var(--surface); }
+
+  .subject-tab.active[data-subject="physics"] {
+    color: var(--ph); background: var(--ph-bg); border-color: var(--ph-border);
+  }
+  .subject-tab.active[data-subject="chemistry"] {
+    color: var(--ch); background: var(--ch-bg); border-color: var(--ch-border);
+  }
+  .subject-tab.active[data-subject="engineering"] {
+    color: var(--en); background: var(--en-bg); border-color: var(--en-border);
+  }
+
+  #header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #global-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .progress-bar-wrap {
+    width: 80px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    background: var(--accent);
+  }
+
+  #weak-btn {
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  #weak-btn:hover {
+    color: var(--r2);
+    border-color: rgba(249,115,22,0.4);
+    background: rgba(249,115,22,0.06);
+  }
+
+  #weak-btn.active {
+    color: var(--r2);
+    border-color: rgba(249,115,22,0.4);
+    background: rgba(249,115,22,0.08);
+  }
+
+  /* === MAIN === */
+  #main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 24px 60px;
+  }
+
+  /* === STATS BAR === */
+  #stats-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 120px;
+  }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-value.accent { color: var(--accent); }
+  .stat-value.warn { color: var(--r2); }
+  .stat-value.good { color: var(--r5); }
+
+  /* === WEAK POINTS PANEL === */
+  #weak-panel {
+    display: none;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid rgba(249,115,22,0.25);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  #weak-panel.visible { display: block; }
+
+  #weak-panel-header {
+    padding: 14px 18px;
+    background: rgba(249,115,22,0.07);
+    border-bottom: 1px solid rgba(249,115,22,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  #weak-panel-header h2 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--r2);
+  }
+
+  #weak-filter-btns {
+    display: flex;
+    gap: 6px;
+  }
+
+  .weak-filter-btn {
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .weak-filter-btn:hover, .weak-filter-btn.active {
+    color: var(--text);
+    border-color: var(--border2);
+    background: var(--surface2);
+  }
+
+  #weak-list {
+    padding: 8px 0;
+    max-height: 480px;
+    overflow-y: auto;
+  }
+
+  .weak-group-header {
+    padding: 8px 18px 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* === UNITS & TOPICS === */
+  .unit-block {
+    margin-bottom: 16px;
+  }
+
+  .unit-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .unit-header:hover {
+    background: var(--surface2);
+    border-color: var(--border2);
+  }
+
+  .unit-header .chevron {
+    font-size: 10px;
+    color: var(--text-dim);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .unit-header.open .chevron { transform: rotate(90deg); }
+
+  .unit-header .unit-name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .unit-header .unit-prog {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .unit-body {
+    display: none;
+    padding: 8px 0 0 16px;
+    border-left: 2px solid var(--border);
+    margin-left: 18px;
+    margin-top: 4px;
+  }
+
+  .unit-body.open { display: block; }
+
+  /* === TOPICS === */
+  .topic-block {
+    margin-bottom: 10px;
+  }
+
+  .topic-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .topic-header:hover { border-color: var(--border2); }
+
+  .topic-header .chevron {
+    font-size: 9px;
+    color: var(--text-dim);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .topic-header.open .chevron { transform: rotate(90deg); }
+
+  .topic-header .topic-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .topic-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .topic-hours {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .topic-prog-text {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .topic-prog-wrap {
+    width: 60px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .topic-prog-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  .topic-body {
+    display: none;
+    padding: 4px 0 0;
+  }
+
+  .topic-body.open { display: block; }
+
+  /* === SUBTOPICS === */
+  .subtopic-block {
+    margin: 8px 0;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .subtopic-name {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* === DOT POINTS === */
+  .point-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  .point-row:last-child { border-bottom: none; }
+
+  .point-row:hover { background: rgba(255,255,255,0.01); }
+
+  .point-bullet {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border2);
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+
+  .point-row[data-rating="1"] .point-bullet { background: var(--r1); }
+  .point-row[data-rating="2"] .point-bullet { background: var(--r2); }
+  .point-row[data-rating="3"] .point-bullet { background: var(--r3); }
+  .point-row[data-rating="4"] .point-bullet { background: var(--r4); }
+  .point-row[data-rating="5"] .point-bullet { background: var(--r5); }
+
+  .point-text {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  .point-row[data-rating="5"] .point-text {
+    color: var(--text-muted);
+  }
+
+  .rating-btns {
+    display: flex;
+    gap: 3px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .r-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .r-btn:hover { border-color: var(--border2); color: var(--text-muted); }
+
+  .r-btn[data-r="1"]:hover, .r-btn[data-r="1"].active { background: var(--r1-bg); border-color: var(--r1); color: var(--r1); }
+  .r-btn[data-r="2"]:hover, .r-btn[data-r="2"].active { background: var(--r2-bg); border-color: var(--r2); color: var(--r2); }
+  .r-btn[data-r="3"]:hover, .r-btn[data-r="3"].active { background: var(--r3-bg); border-color: var(--r3); color: var(--r3); }
+  .r-btn[data-r="4"]:hover, .r-btn[data-r="4"].active { background: var(--r4-bg); border-color: var(--r4); color: var(--r4); }
+  .r-btn[data-r="5"]:hover, .r-btn[data-r="5"].active { background: var(--r5-bg); border-color: var(--r5); color: var(--r5); }
+
+  /* === WEAK PANEL POINT ROWS === */
+  .weak-point-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  .weak-point-row:hover { background: rgba(255,255,255,0.01); }
+
+  .weak-point-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .weak-point-context {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .weak-point-text {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .rating-badge {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 18px;
+  }
+
+  .rating-badge.r1 { background: var(--r1-bg); color: var(--r1); }
+  .rating-badge.r2 { background: var(--r2-bg); color: var(--r2); }
+  .rating-badge.r3 { background: var(--r3-bg); color: var(--r3); }
+  .rating-badge.r4 { background: var(--r4-bg); color: var(--r4); }
+  .rating-badge.r5 { background: var(--r5-bg); color: var(--r5); }
+  .rating-badge.r0 { background: var(--surface2); color: var(--text-dim); }
+
+  .weak-empty {
+    padding: 32px 18px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* === RATING LEGEND === */
+  #rating-legend {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* === RESET BTN === */
+  #reset-btn {
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  #reset-btn:hover {
+    color: var(--r1);
+    border-color: rgba(239,68,68,0.3);
+    background: rgba(239,68,68,0.05);
+  }
+
+  /* === SUBJECT COLOR ACCENTS === */
+  body[data-subject="physics"] { --accent: var(--ph); --accent-bg: var(--ph-bg); }
+  body[data-subject="chemistry"] { --accent: var(--ch); --accent-bg: var(--ch-bg); }
+  body[data-subject="engineering"] { --accent: var(--en); --accent-bg: var(--en-bg); }
+
+  body[data-subject="physics"] .unit-body { border-left-color: rgba(56,189,248,0.25); }
+  body[data-subject="chemistry"] .unit-body { border-left-color: rgba(74,222,128,0.25); }
+  body[data-subject="engineering"] .unit-body { border-left-color: rgba(251,146,60,0.25); }
+
+  .no-results {
+    padding: 40px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body data-subject="physics">
+
+<div id="header">
+  <div id="header-inner">
+    <div id="logo">EXAM <span>TRACKER</span></div>
+    <div id="subject-tabs">
+      <button class="subject-tab active" data-subject="physics">Physics</button>
+      <button class="subject-tab" data-subject="chemistry">Chemistry</button>
+      <button class="subject-tab" data-subject="engineering">Engineering</button>
+    </div>
+    <div id="header-right">
+      <div id="global-progress">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="hdr-prog-fill" style="width:0%"></div></div>
+        <span id="hdr-prog-text">0%</span>
+      </div>
+      <button id="weak-btn" onclick="toggleWeakPanel()">Weak Points</button>
+      <button id="reset-btn" onclick="resetSubject()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<div id="main">
+  <div id="stats-bar"></div>
+  <div id="weak-panel">
+    <div id="weak-panel-header">
+      <h2 id="weak-panel-title">Weak Points</h2>
+      <div id="weak-filter-btns">
+        <button class="weak-filter-btn active" data-filter="weak" onclick="setWeakFilter('weak',this)">Rated 1–2</button>
+        <button class="weak-filter-btn" data-filter="unrated" onclick="setWeakFilter('unrated',this)">Unrated</button>
+        <button class="weak-filter-btn" data-filter="all" onclick="setWeakFilter('all',this)">All</button>
+      </div>
+    </div>
+    <div id="weak-list"></div>
+  </div>
+  <div id="rating-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#5a6a82"></div>Unrated</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--r1)"></div>1 — No idea</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--r2)"></div>2 — Vague</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--r3)"></div>3 — Partial</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--r4)"></div>4 — Solid</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--r5)"></div>5 — Mastered</div>
+  </div>
+  <div id="content"></div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const SUBJECTS = {
+  physics: {
+    name: "Physics",
+    color: "#38bdf8",
+    units: [
+      {
+        id: "ph_u3",
+        name: "Unit 3: Gravity and Electromagnetism",
+        topics: [
+          {
+            id: "ph_u3_t1", name: "Topic 1: Gravity and Motion", hours: 22,
+            subtopics: [
+              { name: "Projectile Motion", points: [
+                { id: "ph_u3_t1_pm_1", text: "Apply vector analysis to resolve a vector into two perpendicular components." },
+                { id: "ph_u3_t1_pm_2", text: "Solve vector problems by resolving vectors into components, adding or subtracting the components and recombining them to determine the resultant vector." },
+                { id: "ph_u3_t1_pm_3", text: "Describe how horizontal and vertical components of a velocity vector are independent of each other." },
+                { id: "ph_u3_t1_pm_4", text: "Solve problems involving projectile motion in the absence of drag effects using v\u2095 = u\u2095 + gt, s\u2095 = u\u2095t + \u00bdgt\u00b2, v\u2095\u00b2 = u\u2095\u00b2 + 2gs\u2095, v\u2093 = u\u2093 and s\u2093 = u\u2093t." },
+                { id: "ph_u3_t1_pm_5", text: "Interpret data relating to the horizontal distance travelled by an object projected at various angles from the horizontal." }
+              ]},
+              { name: "Inclined Planes and Circular Motion", points: [
+                { id: "ph_u3_t1_ic_1", text: "Solve problems involving force due to gravity (weight) and mass using F\u1d3f = mg." },
+                { id: "ph_u3_t1_ic_2", text: "Describe the concept of normal force." },
+                { id: "ph_u3_t1_ic_3", text: "Describe the forces acting on an object on an inclined plane (e.g. force due to gravity, normal force, tension, frictional force and applied force) through the use of free-body diagrams." },
+                { id: "ph_u3_t1_ic_4", text: "Determine the net force acting on an object on an inclined plane using vector analysis." },
+                { id: "ph_u3_t1_ic_5", text: "Describe the concept of uniform circular motion." },
+                { id: "ph_u3_t1_ic_6", text: "Describe the concepts of average speed and period." },
+                { id: "ph_u3_t1_ic_7", text: "Solve problems involving objects undergoing uniform circular motion at a constant speed using v = 2\u03c0r/T and a\u1d9c = v\u00b2/r." },
+                { id: "ph_u3_t1_ic_8", text: "Describe the concepts of centripetal acceleration and centripetal force." },
+                { id: "ph_u3_t1_ic_9", text: "Solve problems involving forces acting on objects in uniform circular motion using F\u1d9c = F\u207f\u1d49\u1d57 = mv\u00b2/r." }
+              ]},
+              { name: "Orbital Mechanics", points: [
+                { id: "ph_u3_t1_om_1", text: "Describe the Law of Universal Gravitation." },
+                { id: "ph_u3_t1_om_2", text: "Solve problems involving the magnitude of the gravitational force between two masses using F = GMm/r\u00b2." },
+                { id: "ph_u3_t1_om_3", text: "Describe the concept of gravitational fields." },
+                { id: "ph_u3_t1_om_4", text: "Solve problems involving the gravitational field strength at a distance from an object using g = F/m = GM/r\u00b2." },
+                { id: "ph_u3_t1_om_5", text: "State the three laws of planetary motion (Kepler\u2019s Laws)." },
+                { id: "ph_u3_t1_om_6", text: "Describe the relationship between the Law of Universal Gravitation and uniform circular motion and recognise this as the third law of planetary motion." },
+                { id: "ph_u3_t1_om_7", text: "Solve problems involving the third law of planetary motion using T\u2090\u00b2/r\u2090\u00b3 = T\u1d47\u00b2/r\u1d47\u00b3 = 4\u03c0\u00b2/GM." }
+              ]}
+            ]
+          },
+          {
+            id: "ph_u3_t2", name: "Topic 2: Electromagnetism", hours: 23,
+            subtopics: [
+              { name: "Electrostatics", points: [
+                { id: "ph_u3_t2_es_1", text: "Describe Coulomb\u2019s Law." },
+                { id: "ph_u3_t2_es_2", text: "Solve problems using F = (1/4\u03c0\u03b5\u2080)(Qq/r\u00b2) = kQq/r\u00b2." },
+                { id: "ph_u3_t2_es_3", text: "Describe the concepts of electric fields, electric field strength and electrical potential energy." },
+                { id: "ph_u3_t2_es_4", text: "Solve problems involving electric field strength using E = F/Q = (1/4\u03c0\u03b5\u2080)(q/r\u00b2) = kq/r\u00b2." },
+                { id: "ph_u3_t2_es_5", text: "Solve problems involving the work done when an electric charge is moved in an electric field using V = \u0394U/q." }
+              ]},
+              { name: "Magnetic Fields", points: [
+                { id: "ph_u3_t2_mf_1", text: "Describe the concept of a magnetic field." },
+                { id: "ph_u3_t2_mf_2", text: "Sketch magnetic field lines due to a moving electric charge, electric currents and magnets." },
+                { id: "ph_u3_t2_mf_3", text: "Describe the generation of a magnetic field from a moving electric charge." },
+                { id: "ph_u3_t2_mf_4", text: "Solve problems involving the magnitude and direction of magnetic fields around a straight electric current-carrying wire and inside a solenoid using B = \u03bc\u2080I/(2\u03c0r) and B = \u03bc\u2080nI." },
+                { id: "ph_u3_t2_mf_5", text: "Describe the force experienced by electric current-carrying conductors and moving electric charges when placed in a magnetic field." },
+                { id: "ph_u3_t2_mf_6", text: "Solve problems involving the magnetic force on an electric current-carrying wire and moving charge in a magnetic field using F = BILsin\u03b8 and F = qvBsin\u03b8." },
+                { id: "ph_u3_t2_mf_7", text: "Interpret data relating to the force acting on a conductor in a magnetic field." },
+                { id: "ph_u3_t2_mf_8", text: "Interpret data relating to the strength of a magnet at various distances." }
+              ]},
+              { name: "Electromagnetic Induction", points: [
+                { id: "ph_u3_t2_ei_1", text: "Describe the concepts of magnetic flux, magnetic flux density, electromagnetic induction, electromotive force (EMF), Faraday\u2019s Law and Lenz\u2019s Law." },
+                { id: "ph_u3_t2_ei_2", text: "Solve problems involving the magnetic flux in an electric current-carrying loop using \u03a6 = BAcos\u03b8." },
+                { id: "ph_u3_t2_ei_3", text: "Describe the process of inducing an EMF across a moving conductor in a magnetic field." },
+                { id: "ph_u3_t2_ei_4", text: "Explain how Lenz\u2019s Law is consistent with the principle of conservation of energy." },
+                { id: "ph_u3_t2_ei_5", text: "Explain how transformers work in terms of Faraday\u2019s Law and electromagnetic induction." },
+                { id: "ph_u3_t2_ei_6", text: "Solve problems involving electromagnetic induction using emf = \u2212N\u0394(BA\u22a5)/\u0394t, emf = \u2212N\u0394\u03a6/\u0394t, I\u209dV\u209d = I\u209bV\u209b and V\u209d/V\u209b = N\u209d/N\u209b." },
+                { id: "ph_u3_t2_ei_7", text: "Describe the concept of an electromagnetic wave." },
+                { id: "ph_u3_t2_ei_8", text: "Explain the relationship between oscillating electric charges and electromagnetic waves." }
+              ]}
+            ]
+          }
+        ]
+      },
+      {
+        id: "ph_u4",
+        name: "Unit 4: Revolutions in Modern Physics",
+        topics: [
+          {
+            id: "ph_u4_t1", name: "Topic 1: Special Relativity", hours: 16,
+            subtopics: [
+              { name: "Special Relativity", points: [
+                { id: "ph_u4_t1_sr_1", text: "Describe observations of natural phenomena that cannot be explained by classical physics, e.g. the presence of muons in the atmosphere and the momentum of high-speed particles in particle accelerators." },
+                { id: "ph_u4_t1_sr_2", text: "Describe the concepts of frame of reference and inertial frame of reference." },
+                { id: "ph_u4_t1_sr_3", text: "State the two postulates of special relativity." },
+                { id: "ph_u4_t1_sr_4", text: "Explain how motion can only be measured relative to an observer." },
+                { id: "ph_u4_t1_sr_5", text: "Explain the concept of simultaneity." },
+                { id: "ph_u4_t1_sr_6", text: "Describe the consequences of the constant speed of light in a vacuum, e.g. time dilation and length contraction." },
+                { id: "ph_u4_t1_sr_7", text: "Describe the concepts of time dilation, proper time interval, relativistic time interval, length contraction, proper length, relativistic length, rest mass and relativistic momentum." },
+                { id: "ph_u4_t1_sr_8", text: "Describe the phenomena of time dilation and length contraction, including examples of experimental evidence of the phenomena." },
+                { id: "ph_u4_t1_sr_9", text: "State the mass\u2013energy equivalence relationship (\u0394E = \u0394mc\u00b2)." },
+                { id: "ph_u4_t1_sr_10", text: "Solve problems involving time dilation, length contraction and relativistic momentum using t = t\u2080/\u221a(1\u2212v\u00b2/c\u00b2), L = L\u2080\u221a(1\u2212v\u00b2/c\u00b2), p = m\u2080v/\u221a(1\u2212v\u00b2/c\u00b2) and \u0394E = \u0394mc\u00b2." },
+                { id: "ph_u4_t1_sr_11", text: "Explain the implications of relativistic momentum of objects increasing as they approach the speed of light." },
+                { id: "ph_u4_t1_sr_12", text: "Explain paradoxical scenarios that may arise as a result of special relativity including the twins\u2019 paradox, flashlights on a train, and the ladder in the barn paradox." }
+              ]}
+            ]
+          },
+          {
+            id: "ph_u4_t2", name: "Topic 2: Quantum Theory", hours: 16,
+            subtopics: [
+              { name: "Quantum Theory", points: [
+                { id: "ph_u4_t2_qt_1", text: "Explain how the double slit experiment provides evidence for the wave model of light." },
+                { id: "ph_u4_t2_qt_2", text: "Describe light as an electromagnetic wave." },
+                { id: "ph_u4_t2_qt_3", text: "Explain the concept of black-body radiation and the significance of the evidence it provides." },
+                { id: "ph_u4_t2_qt_4", text: "Describe the photoelectric effect in terms of the photon." },
+                { id: "ph_u4_t2_qt_5", text: "Describe the concepts of threshold frequency and work function." },
+                { id: "ph_u4_t2_qt_6", text: "Solve problems involving blackbody radiation and the photoelectric effect using \u03bb\u2098\u2090\u2093 = b/T, E = hf = hc/\u03bb, E\u2096 = hf \u2212 W and W = hf\u2080." },
+                { id: "ph_u4_t2_qt_7", text: "Compare the different models of the atom proposed by Rutherford and Bohr." },
+                { id: "ph_u4_t2_qt_8", text: "Explain how Bohr\u2019s model of the hydrogen atom integrates light quanta and atomic energy states to explain the specific wavelengths in the hydrogen line spectrum." },
+                { id: "ph_u4_t2_qt_9", text: "Solve problems involving the line spectra of simple atoms using n\u03bb = 2\u03c0r, mvr = nh/2\u03c0, 1/\u03bb = R(1/n\u0066\u00b2 \u2212 1/n\u1d62\u00b2) and \u03bb = h/p." },
+                { id: "ph_u4_t2_qt_10", text: "Describe wave\u2013particle duality of light by identifying evidence that supports the wave characteristics of light and evidence that supports the particle characteristics of light." },
+                { id: "ph_u4_t2_qt_11", text: "Interpret data related to the photoelectric effect." }
+              ]}
+            ]
+          },
+          {
+            id: "ph_u4_t3", name: "Topic 3: The Standard Model", hours: 13,
+            subtopics: [
+              { name: "The Standard Model", points: [
+                { id: "ph_u4_t3_sm_1", text: "Describe the concepts of elementary particles and antiparticles." },
+                { id: "ph_u4_t3_sm_2", text: "Identify the six types of quarks." },
+                { id: "ph_u4_t3_sm_3", text: "Describe baryons and mesons." },
+                { id: "ph_u4_t3_sm_4", text: "Identify the six types of leptons." },
+                { id: "ph_u4_t3_sm_5", text: "Identify the four gauge bosons." },
+                { id: "ph_u4_t3_sm_6", text: "Compare the strong nuclear, weak nuclear and electromagnetic forces in terms of the gauge bosons." },
+                { id: "ph_u4_t3_sm_7", text: "Contrast the fundamental forces experienced by quarks and leptons." }
+              ]},
+              { name: "Particle Interactions", points: [
+                { id: "ph_u4_t3_pi_1", text: "Describe the concepts of lepton number and baryon number." },
+                { id: "ph_u4_t3_pi_2", text: "Solve problems relating to the conservation of lepton number and baryon number in particle interactions using B = n\u1d47 \u2212 n\u0305\u1d47, B = \u2153(n\u1d42 \u2212 n\u0305\u1d42) and L = n\u2097 \u2212 n\u0305\u2097." },
+                { id: "ph_u4_t3_pi_3", text: "Describe electron/electron, electron/positron and neutron decay interactions using particle interaction diagrams." },
+                { id: "ph_u4_t3_pi_4", text: "Describe how symmetry in particle interactions occurs to maintain the principles of conservation." }
+              ]}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  chemistry: {
+    name: "Chemistry",
+    color: "#4ade80",
+    units: [
+      {
+        id: "ch_u3",
+        name: "Unit 3: Equilibrium, Acids and Redox Reactions",
+        topics: [
+          {
+            id: "ch_u3_t1", name: "Topic 1: Chemical Equilibrium Systems", hours: 25,
+            subtopics: [
+              { name: "Chemical Equilibrium", points: [
+                { id: "ch_u3_t1_ce_1", text: "Discriminate between open or closed chemical systems." },
+                { id: "ch_u3_t1_ce_2", text: "Identify that physical changes are usually reversible, whereas only some chemical reactions are reversible." },
+                { id: "ch_u3_t1_ce_3", text: "Symbolise equilibrium equations using \u21cb in balanced chemical equations." },
+                { id: "ch_u3_t1_ce_4", text: "Explain observable properties and the characteristics of physical and chemical systems in a state of equilibrium." },
+                { id: "ch_u3_t1_ce_5", text: "Explain that, over time, physical change and reversible chemical reactions reach a state of dynamic equilibrium in a closed system, with the relative concentrations of products and reactants defining the position of equilibrium." },
+                { id: "ch_u3_t1_ce_6", text: "Explain the reversibility of chemical reactions by considering the activation energies of the forward and reverse reactions." },
+                { id: "ch_u3_t1_ce_7", text: "Analyse data and interpret graphical representations of relative changes in the concentration of reactants and products against time, to determine the position of equilibrium." }
+              ]},
+              { name: "Factors that Affect Equilibrium", points: [
+                { id: "ch_u3_t1_fe_1", text: "Determine the effect of temperature change on chemical systems at equilibrium by considering the enthalpy change for the forward and reverse reactions." },
+                { id: "ch_u3_t1_fe_2", text: "Explain the effect of changes of temperature, concentration and pressure on chemical systems at equilibrium by applying collision theory to the forward and reverse reactions." },
+                { id: "ch_u3_t1_fe_3", text: "Apply Le Ch\u00e2telier\u2019s principle to determine the effect of changes of temperature, concentration of chemicals, pressure and the addition of a catalyst on the position of equilibrium and on the value of the equilibrium constant." }
+              ]},
+              { name: "Equilibrium Constants", points: [
+                { id: "ch_u3_t1_ec_1", text: "Identify that the equilibrium constant (K\u1d9c) indicates the relationship between product and reactant concentrations at equilibrium." },
+                { id: "ch_u3_t1_ec_2", text: "Identify that the solubility product (K\u209b\u209a) gives a measure of the solubility of an ionic compound." },
+                { id: "ch_u3_t1_ec_3", text: "Determine the equilibrium law expression for homogeneous and heterogeneous systems." },
+                { id: "ch_u3_t1_ec_4", text: "Determine the extent of a reaction from the magnitude of the equilibrium constant (K\u1d9c)." },
+                { id: "ch_u3_t1_ec_5", text: "Calculate the reaction quotient (Q) for reversible reactions using Q = [C]\u1d9c[D]\u1d48 / [A]\u1d43[B]\u1d47 for the reaction aA + bB \u21cb cC + dD." },
+                { id: "ch_u3_t1_ec_6", text: "Calculate equilibrium constants (K\u1d9c) and the concentrations of reactants and products. Assume [reactants]initial \u2248 [reactants]equilibrium when K\u1d9c is very small; state this assumption when used." },
+                { id: "ch_u3_t1_ec_7", text: "Calculate solubility products (K\u209b\u209a) and the concentrations of ions in aqueous solutions using K\u209b\u209a = [C]\u1d9c[D]\u1d48 for the reaction aA(s) \u21cb cC(aq) + dD(aq)." },
+                { id: "ch_u3_t1_ec_8", text: "Infer shifts in equilibrium reactions using equilibrium constants (K\u1d9c) and reaction quotients (Q)." },
+                { id: "ch_u3_t1_ec_9", text: "Analyse data to determine reaction quotients (Q), equilibrium constants (K\u1d9c), concentrations of reactants and products, and the concentration of ions in aqueous solutions." }
+              ]},
+              { name: "Properties of Acids and Bases", points: [
+                { id: "ch_u3_t1_ab_1", text: "Identify that acids are substances that can act as proton (hydrogen ion) donors." },
+                { id: "ch_u3_t1_ab_2", text: "Identify acids as monoprotic, diprotic or polyprotic." },
+                { id: "ch_u3_t1_ab_3", text: "Identify hydrochloric, nitric and sulfuric acid as strong acids and group 1 hydroxides and barium hydroxide as strong bases." },
+                { id: "ch_u3_t1_ab_4", text: "Identify carboxylic and carbonic acids as weak acids and ammonia and amines as weak bases." },
+                { id: "ch_u3_t1_ab_5", text: "Discriminate between the terms strong, weak, concentrated and dilute for acids and bases." },
+                { id: "ch_u3_t1_ab_6", text: "Discriminate between strong and weak acids and bases in terms of the extent of dissociation, rate of reaction, pH and electrical conductivity." },
+                { id: "ch_u3_t1_ab_7", text: "Analyse data to determine the strength, concentration, pH and electrical conductivity of acids and bases." }
+              ]},
+              { name: "pH", points: [
+                { id: "ch_u3_t1_ph_1", text: "Identify that water is a weak electrolyte and the self-ionisation of water is represented by K\u1d64 = [H\u207a][OH\u207b]." },
+                { id: "ch_u3_t1_ph_2", text: "Apply K\u1d64 to calculate the concentration of hydrogen ions from the concentration of hydroxide ions in a solution." },
+                { id: "ch_u3_t1_ph_3", text: "Calculate pH, hydrogen ion concentration [H\u207a(aq)], pOH and hydroxide ion concentrations [OH\u207b(aq)] for strong acids and bases using pH = \u2212log\u2081\u2080[H\u207a] and pOH = \u2212log\u2081\u2080[OH\u207b]." }
+              ]},
+              { name: "Br\u00f8nsted-Lowry Model", points: [
+                { id: "ch_u3_t1_bl_1", text: "Describe acids and bases in equilibrium systems using the Br\u00f8nsted-Lowry model." },
+                { id: "ch_u3_t1_bl_2", text: "Explain the Br\u00f8nsted-Lowry model using chemical equations that illustrate the transfer of hydrogen ions (protons) between conjugate acid-base pairs." },
+                { id: "ch_u3_t1_bl_3", text: "Identify that amphiprotic species can act as a Br\u00f8nsted-Lowry acid (or base)." },
+                { id: "ch_u3_t1_bl_4", text: "Determine the formula of the conjugate acid (or base) of any Br\u00f8nsted-Lowry base (or acid)." },
+                { id: "ch_u3_t1_bl_5", text: "Identify that buffers are solutions that are conjugate in nature and resist a change in pH when a small amount of an acid or base is added. (Buffer calculations are not required.)" },
+                { id: "ch_u3_t1_bl_6", text: "Apply Le Ch\u00e2telier\u2019s principle to explain how buffer solutions respond to the addition of hydrogen ions and hydroxide ions." }
+              ]},
+              { name: "Dissociation Constants", points: [
+                { id: "ch_u3_t1_dc_1", text: "Explain that the strength of acids is related to the degree of ionisation at equilibrium in aqueous solution." },
+                { id: "ch_u3_t1_dc_2", text: "Identify that the strength of acids can be represented with chemical equations and equilibrium constants (K\u2090)." },
+                { id: "ch_u3_t1_dc_3", text: "Determine the expression for the dissociation constant for weak acids (K\u2090) and weak bases (K\u1d47) from balanced chemical equations." },
+                { id: "ch_u3_t1_dc_4", text: "Calculate dissociation constants (K\u2090, K\u1d47 and K\u1d64), pK\u2090, pK\u1d47, and the concentrations of reactants and products using K\u2090 = [H\u2083O\u207a][A\u207b]/[HA]; K\u1d47 = [BH\u207a][OH\u207b]/[B]; K\u1d64 = K\u2090 \u00d7 K\u1d47." },
+                { id: "ch_u3_t1_dc_5", text: "Analyse data to compare the relative strengths of acids and bases." }
+              ]},
+              { name: "Acid-Base Indicators", points: [
+                { id: "ch_u3_t1_ai_1", text: "Identify that acid-base indicators are a weak acid or a weak base where the conjugate acid-base pair have different colours, represented by HIn(aq) \u21cb H\u207a(aq) + In\u207b(aq) or BOH(aq) \u21cb B\u207a(aq) + OH\u207b(aq)." },
+                { id: "ch_u3_t1_ai_2", text: "Identify that indicators change colour when pH = pK\u2090." },
+                { id: "ch_u3_t1_ai_3", text: "Explain the relationship between the pH range, the end point and the pK\u2090 value of an acid-base indicator." },
+                { id: "ch_u3_t1_ai_4", text: "Analyse data to determine an appropriate indicator given the equivalence point of the titration and the pH range of the indicator (assuming indicators change colour over a range of pK\u2090 \u00b1 1)." }
+              ]},
+              { name: "Volumetric Analysis", points: [
+                { id: "ch_u3_t1_va_1", text: "Discriminate between the terms end point and equivalence point." },
+                { id: "ch_u3_t1_va_2", text: "Sketch the general shapes of conductometric and acid-base titration curves involving strong and weak acids and bases. (Titration of weak acids to weak bases is not required.)" },
+                { id: "ch_u3_t1_va_3", text: "Interpret acid-base titration curves to determine the intercept with pH axis, equivalence point, buffer region and points where pK\u2090 = pH or pK\u1d47 = pOH." },
+                { id: "ch_u3_t1_va_4", text: "Interpret conductometric titration curves to determine the intercept with conductivity axis, equivalence point and volume of titrant." },
+                { id: "ch_u3_t1_va_5", text: "Analyse volumetric data, including solubility, conductometric and acid-base titration curves, to determine moles, mass, volume and concentration." },
+                { id: "ch_u3_t1_va_6", text: "Analyse titration curves to calculate the concentration of a solution with reference to a standard solution." }
+              ]}
+            ]
+          },
+          {
+            id: "ch_u3_t2", name: "Topic 2: Oxidation and Reduction", hours: 20,
+            subtopics: [
+              { name: "Redox Reactions", points: [
+                { id: "ch_u3_t2_rr_1", text: "Identify that displacement reactions of metals, combustion, corrosion and electrochemical processes can be modelled as redox reactions involving oxidation of one substance and reduction of another." },
+                { id: "ch_u3_t2_rr_2", text: "Determine the species oxidised and reduced, and the oxidising agent and reducing agent, in redox reactions." },
+                { id: "ch_u3_t2_rr_3", text: "Explain that oxidation can be modelled as the loss of electrons from a chemical species, and reduction can be modelled as the gain of electrons by a chemical species; these processes can be represented using balanced half-equations and redox equations (acidic conditions only)." },
+                { id: "ch_u3_t2_rr_4", text: "Determine the oxidation state (represented with the sign given before the number, e.g. +2) of an atom in an ion or compound." },
+                { id: "ch_u3_t2_rr_5", text: "Apply oxidation numbers (represented as roman numerals) to name transition metal compounds." },
+                { id: "ch_u3_t2_rr_6", text: "Apply half-equations and oxidation numbers to balance redox equations (acid conditions only) and to discriminate between the species oxidised and reduced, and the oxidising agent and reducing agent." },
+                { id: "ch_u3_t2_rr_7", text: "Analyse data, including displacement reactions of metals, combustion, corrosion and electrochemical processes to determine redox reactions." }
+              ]},
+              { name: "Electrochemical Cells", points: [
+                { id: "ch_u3_t2_ec_1", text: "Explain that electrochemical cells, including galvanic and electrolytic cells, consist of oxidation and reduction half-reactions connected via an external circuit that allows electrons to move from the anode (oxidation reaction) to the cathode (reduction reaction)." },
+                { id: "ch_u3_t2_ec_2", text: "Discriminate between a galvanic and an electrolytic cell." }
+              ]},
+              { name: "Galvanic Cells", points: [
+                { id: "ch_u3_t2_gc_1", text: "Identify that galvanic cells generate an electrical potential difference from a spontaneous redox reaction." },
+                { id: "ch_u3_t2_gc_2", text: "Explain that galvanic cells can be represented as cell diagrams, including anode and cathode half-equations." },
+                { id: "ch_u3_t2_gc_3", text: "Explain that oxidation occurs at the negative electrode (anode) and reduction occurs at the positive electrode (cathode)." },
+                { id: "ch_u3_t2_gc_4", text: "Explain that two half-cells can be connected by a salt bridge to create a galvanic cell, e.g. Mg, Zn, Fe and Cu and solutions of their ions." },
+                { id: "ch_u3_t2_gc_5", text: "Identify the essential components of a galvanic cell, including the oxidation and reduction half-cells, the positive and negative electrodes and their solutions of ions, the flow of electrons, the movement of ions, and the salt bridge." },
+                { id: "ch_u3_t2_gc_6", text: "Sketch a galvanic cell and label the essential components." }
+              ]},
+              { name: "Standard Electrode Potential", points: [
+                { id: "ch_u3_t2_se_1", text: "Describe the standard hydrogen electrode." },
+                { id: "ch_u3_t2_se_2", text: "Explain the term standard electrode (reduction) potential, E\u00b0." },
+                { id: "ch_u3_t2_se_3", text: "Identify the limitations associated with standard electrode (reduction) potentials, E\u00b0." },
+                { id: "ch_u3_t2_se_4", text: "Calculate cell potential, E\u00b0\u1d9c\u1d49\u2097\u2097 using E\u00b0\u1d9c\u1d49\u2097\u2097 = E\u00b0reduction half-cell \u2212 E\u00b0oxidation half-cell." },
+                { id: "ch_u3_t2_se_5", text: "Apply standard electrode potentials to determine the relative strength of oxidising and reducing agents." },
+                { id: "ch_u3_t2_se_6", text: "Analyse data, including standard electrode potentials, to make predictions about the spontaneity of a reaction and to compare electrochemical cells." }
+              ]},
+              { name: "Electrolytic Cells", points: [
+                { id: "ch_u3_t2_el_1", text: "Identify that electrolytic cells use an external electrical potential difference to provide the energy to allow a non-spontaneous redox reaction to occur." },
+                { id: "ch_u3_t2_el_2", text: "Identify the essential components of an electrolytic cell, including source of electric current and conductors, positive and negative electrodes, and the electrolyte." },
+                { id: "ch_u3_t2_el_3", text: "State the factors that affect the products in electrolysis." },
+                { id: "ch_u3_t2_el_4", text: "Determine the products of the electrolysis of a molten salt." },
+                { id: "ch_u3_t2_el_5", text: "Explain the products of the electrolysis of aqueous solutions, e.g. dilute and concentrated sodium chloride(aq) and copper sulfate(aq)." },
+                { id: "ch_u3_t2_el_6", text: "Describe that electrolytic cells can be used in small-scale and industrial situations, including metal plating and the purification of copper." },
+                { id: "ch_u3_t2_el_7", text: "Calculate moles of electrons, current, time, mass of substance or volume of gas produced or used during electrolysis using q = n(e\u207b) \u00d7 F or q = I \u00d7 t." },
+                { id: "ch_u3_t2_el_8", text: "Analyse data to determine the relative amounts of product produced at each electrode in electrolysis." }
+              ]}
+            ]
+          }
+        ]
+      },
+      {
+        id: "ch_u4",
+        name: "Unit 4: Structure, Synthesis and Design",
+        topics: [
+          {
+            id: "ch_u4_t1", name: "Topic 1: Properties and Structure of Organic Materials", hours: 30,
+            subtopics: [
+              { name: "Structure of Organic Compounds", points: [
+                { id: "ch_u4_t1_so_1", text: "Identify organic molecules including alkanes, alkenes, alkynes, alcohols, aldehydes, ketones, carboxylic acids, haloalkanes, esters, amines and amides." },
+                { id: "ch_u4_t1_so_2", text: "Discriminate between class and functional groups, e.g. for OH, hydroxyl is the functional group and alcohol is the class." },
+                { id: "ch_u4_t1_so_3", text: "Describe the features of a homologous series." },
+                { id: "ch_u4_t1_so_4", text: "Discriminate between saturated and unsaturated organic molecules." },
+                { id: "ch_u4_t1_so_5", text: "Discriminate between empirical, molecular and structural formulas." },
+                { id: "ch_u4_t1_so_6", text: "Determine molecular and structural formulas for organic compounds up to C10, including simple methyl and ethyl branched chains, for: alkanes, alkenes and alkynes; alcohols (primary, secondary and tertiary); aldehydes and ketones; carboxylic acids; amines and amides; haloalkanes (primary, secondary and tertiary); and esters." },
+                { id: "ch_u4_t1_so_7", text: "Apply IUPAC rules in the nomenclature of organic compounds up to C10, including simple methyl and ethyl branched chains, for: alkanes, alkenes and alkynes; alcohols (primary, secondary and tertiary); aldehydes and ketones; carboxylic acids; haloalkanes (primary, secondary and tertiary); and esters." },
+                { id: "ch_u4_t1_so_8", text: "Identify structural and stereoisomers, including geometrical (cis and trans) and optical isomers." },
+                { id: "ch_u4_t1_so_9", text: "Deduce the structural formula of geometrical (cis and trans) isomers (non-cyclic alkenes), optical isomers and isomers of the non-cyclic alkanes up to C6." },
+                { id: "ch_u4_t1_so_10", text: "Sketch the structural formula and apply IUPAC rules in the nomenclature for isomers of alkanes (non-cyclic) and alkenes (straight chain) up to C6, and for the geometrical (cis and trans) isomers of simple non-cyclic alkenes." },
+                { id: "ch_u4_t1_so_11", text: "Determine the structural formula of optical isomers for simple organic compounds." },
+                { id: "ch_u4_t1_so_12", text: "Identify chiral carbon atoms." },
+                { id: "ch_u4_t1_so_13", text: "Analyse data to determine the structural, molecular and empirical formula of organic compounds and the percentage composition of elements in organic compounds." }
+              ]},
+              { name: "Physical Properties and Trends", points: [
+                { id: "ch_u4_t1_pp_1", text: "Explain the trends (melting point, boiling point, volatility, solubility in water and organic solvents) within and between homologous series (alkanes, alkenes, alcohols, carboxylic acids) in terms of intermolecular and intramolecular bonding, e.g. dispersion forces, dipole-dipole interactions and hydrogen bonds." },
+                { id: "ch_u4_t1_pp_2", text: "Analyse data to determine the physical properties of a homologous series, trends in melting point, boiling point, volatility and the solubility of alkanes, alkenes, alcohols and carboxylic acids." }
+              ]},
+              { name: "Organic Reactions and Reaction Pathways", points: [
+                { id: "ch_u4_t1_or_1", text: "Identify that an organic compound displays characteristic chemical properties and undergoes specific reactions based on the functional group present." },
+                { id: "ch_u4_t1_or_2", text: "Determine, using equations, the reaction of: alkanes with halogens (X\u2082); haloalkanes with halogens (X\u2082), sodium hydroxide and ammonia; alkenes with water, halogens (X\u2082), hydrogen (H\u2082) and hydrogen halides (HX); alcohols with hydrogen halides (HX); carboxylic acids with alcohols to form esters, and with amines to form amides." },
+                { id: "ch_u4_t1_or_3", text: "Determine, using equations, reactions including: the oxidation of alcohols; the combustion of alkanes and alcohols; the addition of alkenes to form poly(alkenes); the reduction of alkynes and alkenes to form alkanes; and the elimination of haloalkanes to form alkenes." },
+                { id: "ch_u4_t1_or_4", text: "Identify reactions as addition, elimination, substitution or redox (oxidation-reduction). (Reaction mechanisms for substitution and elimination reactions are not required.)" },
+                { id: "ch_u4_t1_or_5", text: "Determine the primary, secondary and tertiary carbon atoms in haloalkanes and alcohols." },
+                { id: "ch_u4_t1_or_6", text: "Describe the acid-base properties of carboxylic acids and amines." },
+                { id: "ch_u4_t1_or_7", text: "Explain that esterification is a reversible reaction." },
+                { id: "ch_u4_t1_or_8", text: "Discriminate between: alkanes and alkenes using bromine water; primary, secondary and tertiary alcohols using acidified potassium dichromate(VI) and potassium manganate(VII)." },
+                { id: "ch_u4_t1_or_9", text: "Apply Markovnikov\u2019s rule to determine the products for addition reactions of alkenes with hydrogen halides (HX) and water." },
+                { id: "ch_u4_t1_or_10", text: "Determine reaction pathways, including reagents, conditions and chemical equations, given the starting materials and the product/s formed." },
+                { id: "ch_u4_t1_or_11", text: "Interpret chemical tests to distinguish between alkanes and alkenes; and primary, secondary and tertiary alcohols." }
+              ]},
+              { name: "Organic Materials: Structure and Function", points: [
+                { id: "ch_u4_t1_om_1", text: "Describe the structural features of amino acids, tripeptides, monosaccharides and disaccharides." },
+                { id: "ch_u4_t1_om_2", text: "Describe the structural features of polyethene (LDPE and HDPE), polypropene (syndiotactic, isotactic and atactic) and polytetrafluoroethene (Teflon)." },
+                { id: "ch_u4_t1_om_3", text: "Describe the structural features of polylactic acid (PLA), polyamide (nylon) and polyester." },
+                { id: "ch_u4_t1_om_4", text: "Explain how properties, including strength, density and biodegradability of polymers can be related to the structures of the materials." },
+                { id: "ch_u4_t1_om_5", text: "Explain the acid-base properties of 2-amino acids, including the formation of zwitterions." }
+              ]},
+              { name: "Analytical Techniques", points: [
+                { id: "ch_u4_t1_at_1", text: "Explain how amino acids can be separated and identified by paper/TLC chromatography, including intermolecular forces/solubility in mobile and stationary phase and retention (R\u1d3f) values." },
+                { id: "ch_u4_t1_at_2", text: "Explain how amino acids can be separated and analysed by electrophoresis, including pH of buffer, isoelectric points, and movement of charged ions." },
+                { id: "ch_u4_t1_at_3", text: "Analyse data, including paper/TLC chromatograms and electrophoresis, to determine the identity of amino acids and retention factors using R\u1d3f = distance moved by amino acid / distance moved by solvent." },
+                { id: "ch_u4_t1_at_4", text: "Analyse data from spectra, including mass spectroscopy and infrared, to determine the identity and structure of organic molecules." }
+              ]}
+            ]
+          },
+          {
+            id: "ch_u4_t2", name: "Topic 2: Chemical Synthesis and Design", hours: 15,
+            subtopics: [
+              { name: "Chemical Synthesis", points: [
+                { id: "ch_u4_t2_cs_1", text: "Explain that reagents and reaction conditions are chosen to optimise the yield and rate for chemical synthesis processes, including the production of ammonia (Haber process) and sulfuric acid (contact process)." },
+                { id: "ch_u4_t2_cs_2", text: "Describe, using equations, the: production of ammonia by the Haber process; production of sulfuric acid using the contact process; production of ethanol from fermentation and the hydration of ethene; operation of a hydrogen fuel cell under acidic and alkaline conditions." },
+                { id: "ch_u4_t2_cs_3", text: "Calculate the yield of chemical synthesis reactions by comparing stoichiometric quantities with actual quantities and by determining limiting reagents and/or reaction conditions." },
+                { id: "ch_u4_t2_cs_4", text: "Analyse and interpret data to determine the impact of reagents and reaction conditions on yield and rate of chemical synthesis processes." }
+              ]},
+              { name: "Macromolecules: Polymers, Proteins and Carbohydrates", points: [
+                { id: "ch_u4_t2_mm_1", text: "Describe, using equations, how addition polymers, including polyethene (LDPE and HDPE), polypropene and polytetrafluoroethene, can be produced from their monomers." },
+                { id: "ch_u4_t2_mm_2", text: "Describe, using equations, how condensation polymers, including polysaccharides (carbohydrates), polylactic acid (PLA), polyamide (proteins and nylon) and polyester, can be produced from their monomers." },
+                { id: "ch_u4_t2_mm_3", text: "Apply amino acid symbols to construct and name tripeptides." },
+                { id: "ch_u4_t2_mm_4", text: "Identify that tripeptides are formed when amino acid monomers are joined by peptide bonds." },
+                { id: "ch_u4_t2_mm_5", text: "Identify that disaccharides are formed when monosaccharide monomers are joined by glycosidic bonds." }
+              ]}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  engineering: {
+    name: "Engineering",
+    color: "#fb923c",
+    units: [
+      {
+        id: "en_u4",
+        name: "Unit 4: Machines and Mechanisms",
+        topics: [
+          {
+            id: "en_u4_t1", name: "Topic 1: Machines in Society", hours: null,
+            subtopics: [
+              { name: "Machines in Society", points: [
+                { id: "en_u4_t1_ms_1", text: "Use the problem-solving process in Engineering to solve a complex open-ended machines and mechanism problem involving machines, mechanisms and control technology." },
+                { id: "en_u4_t1_ms_2", text: "Comprehend the scope of knowledge required in engineering careers that involve machines and mechanisms, including mechanical, mechatronic and biomechanical engineering." },
+                { id: "en_u4_t1_ms_3", text: "Analyse community problems involving machines as solutions to comprehend how engineers use their expertise and knowledge of technology, mechanics, materials science and control technologies to benefit communities." }
+              ]}
+            ]
+          },
+          {
+            id: "en_u4_t2", name: "Topic 2: Machines, Mechanisms and Control", hours: null,
+            subtopics: [
+              { name: "Basic Machines and Motion", points: [
+                { id: "en_u4_t2_bm_1", text: "Comprehend the function and purpose of basic machines, including bicycle, car jack and crowbar." },
+                { id: "en_u4_t2_bm_2", text: "Identify four types of motion, including linear, rotary, oscillatory and reciprocating." },
+                { id: "en_u4_t2_bm_3", text: "Calculate mechanical advantage (MA) and velocity ratio (VR) using MA = F\u2097/F\u1d49 and VR = d\u1d49/d\u2097." }
+              ]},
+              { name: "Mechanical Components", points: [
+                { id: "en_u4_t2_mc_1", text: "Comprehend and calculate the function and operation of inclined planes and screws using mechanical advantage and velocity ratio." },
+                { id: "en_u4_t2_mc_2", text: "Comprehend and calculate the function and operation of levers (first, second and third order) using mechanical advantage and velocity ratio." },
+                { id: "en_u4_t2_mc_3", text: "Comprehend and calculate the function and operation of simple pulley systems (fixed and moveable, using one continuous rope) where MA or VR is determined by the number of ropes supporting the load." },
+                { id: "en_u4_t2_mc_4", text: "Comprehend and calculate the function and operation of belts (flat and V) connecting a driver and a driven pulley using VR = radius/diameter/circumference of driven pulley / radius/diameter/circumference of driver pulley, and VR = input speed / output speed." },
+                { id: "en_u4_t2_mc_5", text: "Comprehend and calculate the function and operation of spur, worm, and rack and pinion gears using GR or VR = radius/diameter/circumference/number of teeth on driven gear / radius/diameter/circumference/number of teeth on driver gear, and GR or VR = angular movement of driver gear / angular movement of driven gear." }
+              ]},
+              { name: "Energy and Work", points: [
+                { id: "en_u4_t2_ew_1", text: "Calculate work done using W = force \u00d7 displacement (distance moved in direction of force) = Fs." },
+                { id: "en_u4_t2_ew_2", text: "Calculate power (rate of doing work) using P = W/t." },
+                { id: "en_u4_t2_ew_3", text: "Calculate kinetic energy (KE = \u00bdmv\u00b2) and potential energy (PE = mgh), recognising that total mechanical energy is the sum of kinetic and potential energy." },
+                { id: "en_u4_t2_ew_4", text: "Calculate energy efficiency using \u03b7 = MA/VR = useful output / input." }
+              ]},
+              { name: "Kinematics and Friction", points: [
+                { id: "en_u4_t2_kf_1", text: "Solve problems involving equations of uniformly accelerated motion along a straight line in one dimension using v = u + at, v\u00b2 = u\u00b2 + 2as and s = ut + \u00bdat\u00b2." },
+                { id: "en_u4_t2_kf_2", text: "Recognise that friction is a force opposing motion." },
+                { id: "en_u4_t2_kf_3", text: "Calculate using coefficient of friction, normal force and angle of repose, using \u03bc\u209b = tan\u03b8 and F\u1da0 = \u03bcF\u2099." },
+                { id: "en_u4_t2_kf_4", text: "Distinguish between and solve integrated linear motion problems involving static friction (F\u1da0 = \u03bc\u209bF\u2099) and kinetic friction (F\u1da0 = \u03bc\u1d4eF\u2099)." },
+                { id: "en_u4_t2_kf_5", text: "Solve problems involving one-body systems in motion on an inclined plane, including uniform velocity and uniform acceleration." }
+              ]},
+              { name: "Logic Control", points: [
+                { id: "en_u4_t2_lc_1", text: "Apply logic gates AND, OR, NOT, NAND, NOR and XOR, using their standard symbols." },
+                { id: "en_u4_t2_lc_2", text: "Construct truth tables using logical true, logical false, logical identity and logical negation." },
+                { id: "en_u4_t2_lc_3", text: "Create logic gate circuit diagrams and corresponding truth tables based on specified conditions, e.g. traffic light function, boom gates at a railway crossing, thermostatically controlled incubator or cooking system, sun-tracking systems for solar panels, solar-powered devices." }
+              ]},
+              { name: "Electrical Circuits", points: [
+                { id: "en_u4_t2_ec_1", text: "Solve problems involving basic series circuits using R\u209c\u2092\u209c\u2090\u2097 = R\u2081 + R\u2082 + R\u2083 + ..., V\u209c\u2092\u209c\u2090\u2097 = V\u2081 + V\u2082 + V\u2083 + ... and V = IR." },
+                { id: "en_u4_t2_ec_2", text: "Solve problems involving basic parallel circuits using 1/R\u209c\u2092\u209c\u2090\u2097 = 1/R\u2081 + 1/R\u2082 + 1/R\u2083 + ..., I\u209c\u2092\u209c\u2090\u2097 = I\u2081 + I\u2082 + I\u2083 + ... and V = IR." },
+                { id: "en_u4_t2_ec_3", text: "Solve problems involving electrical power using P = VI and energy using E = Pt." },
+                { id: "en_u4_t2_ec_4", text: "Calculate electrical power efficiency using \u03b7 = P\u2092\u1d58\u209c/P\u1d62\u207f = power output / power input." },
+                { id: "en_u4_t2_ec_5", text: "Calculate electrical energy efficiency using \u03b7 = E\u2092\u1d58\u209c/E\u1d62\u207f = energy output / energy input." }
+              ]}
+            ]
+          },
+          {
+            id: "en_u4_t3", name: "Topic 3: Materials", hours: null,
+            subtopics: [
+              { name: "Phase Diagrams", points: [
+                { id: "en_u4_t3_pd_1", text: "Explain key features, components and phases of a lead-tin thermal-equilibrium phase diagram, including the eutectic reaction (composition and temperature), single- and two-phase regions at different temperatures and compositions, chemical composition of the phases, and hypoeutectic and hypereutectic compositions." },
+                { id: "en_u4_t3_pd_2", text: "Calculate the percentages solid and liquid, along with composition of solid and liquid, using the lever rule for binary alloys with complete solid insolubility and partial solid solubility." }
+              ]},
+              { name: "Iron-Carbon System and Steel", points: [
+                { id: "en_u4_t3_ic_1", text: "Identify and comprehend the microstructures of the steel portion of an iron-carbon equilibrium phase diagram (i.e. iron with approximately 2.1% or less carbon content), including austenite, cementite, ferrite and pearlite for eutectoid, hypoeutectoid and hypereutectoid steel." },
+                { id: "en_u4_t3_ic_2", text: "Comprehend that the chemical composition of plain-carbon steels contributes to their physical and mechanical properties: low-carbon steel (0.07\u20130.30% C) for automobile body parts, wire products, structural plates; medium-carbon steel (0.30\u20130.60% C) for automotive components, shafts, axles, gears, train rails; high-carbon steel (0.60\u20132.0% C) for high-strength spring materials, cutting tools, punches and dies." },
+                { id: "en_u4_t3_ic_3", text: "Identify and explain the effects of materials processing and manufacturing techniques on ferrous metal grain structure, including: hot and cold working (rolling and forging); full annealing and process annealing; normalising; hardening (water quenched, oil quenched, air cooled and furnace cooled; the martensitic reaction and the rate of cooling for eutectoid steel); and tempering (tempered martensite structure)." }
+              ]},
+              { name: "Engineering Plastics", points: [
+                { id: "en_u4_t3_ep_1", text: "Comprehend the mechanical properties of and current uses for acrylonitrile butadiene styrene (ABS): high heat resistance, good low-temperature resistance, high impact resistance, high chemical resistance, excellent electrical insulation, good dimensional stability. Used in automobile parts, PPE (face shields, hard hats, helmets), electrical equipment (power tools housings, printers) and high-strength construction applications." },
+                { id: "en_u4_t3_ep_2", text: "Comprehend the mechanical properties of and current uses for polycarbonate (PC): high transparency, good toughness, high impact strength, good chemical resistance, high heat resistance, good electrical properties, high dimensional stability. Used in lenses and shields (automotive headlamps, security windows, motorcycle face shields, prescription lenses, safety glasses, skylights) and electrical/electronic device housings." },
+                { id: "en_u4_t3_ep_3", text: "Comprehend the mechanical properties of and current uses for polyamide (PA6/nylon 6): high strength, high abrasion resistance, good thermal resistance, good chemical resistance, good electrical properties, good fatigue resistance. Used in machine parts (gears, rollers, guides, bearings, wear pads, wheels), medical implants, electrical connectors and fishing line." }
+              ]}
+            ]
+          }
+        ]
+      }
+    ]
+  }
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let currentSubject = 'physics';
+let ratings = {};
+let weakFilter = 'weak';
+let weakPanelOpen = false;
+
+const STORAGE_KEY = 'syllabus_ratings_v2';
+
+function loadRatings() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) ratings = JSON.parse(stored);
+  } catch(e) { ratings = {}; }
+}
+
+function saveRatings() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(ratings)); } catch(e) {}
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function getAllPoints(subjectKey) {
+  const subject = SUBJECTS[subjectKey];
+  const points = [];
+  subject.units.forEach(unit => {
+    unit.topics.forEach(topic => {
+      topic.subtopics.forEach(sub => {
+        sub.points.forEach(p => {
+          points.push({ ...p, subjectKey, subjectName: subject.name, unitName: unit.name, topicName: topic.name, subtopicName: sub.name });
+        });
+      });
+    });
+  });
+  return points;
+}
+
+function getStats(subjectKey) {
+  const points = getAllPoints(subjectKey);
+  const total = points.length;
+  const rated = points.filter(p => ratings[p.id] !== undefined).length;
+  const weak = points.filter(p => ratings[p.id] !== undefined && ratings[p.id] <= 2).length;
+  const mastered = points.filter(p => ratings[p.id] === 5).length;
+  const unrated = total - rated;
+  return { total, rated, weak, mastered, unrated, pct: total > 0 ? Math.round(rated/total*100) : 0 };
+}
+
+function getTopicStats(topicId) {
+  let total = 0, rated = 0;
+  for (const sk of Object.keys(SUBJECTS)) {
+    SUBJECTS[sk].units.forEach(u => {
+      u.topics.forEach(t => {
+        if (t.id === topicId) {
+          t.subtopics.forEach(s => {
+            total += s.points.length;
+            rated += s.points.filter(p => ratings[p.id] !== undefined).length;
+          });
+        }
+      });
+    });
+  }
+  return { total, rated, pct: total > 0 ? Math.round(rated/total*100) : 0 };
+}
+
+function ratingColor(r) {
+  if (!r) return 'var(--text-dim)';
+  return ['','var(--r1)','var(--r2)','var(--r3)','var(--r4)','var(--r5)'][r];
+}
+
+function ratingBgColor(r) {
+  if (!r) return 'var(--surface2)';
+  return ['','var(--r1-bg)','var(--r2-bg)','var(--r3-bg)','var(--r4-bg)','var(--r5-bg)'][r];
+}
+
+function subjectColor(sk) {
+  return SUBJECTS[sk].color;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  document.body.dataset.subject = currentSubject;
+  renderTabs();
+  renderStats();
+  renderContent();
+  renderHeader();
+  if (weakPanelOpen) renderWeakPanel();
+}
+
+function renderTabs() {
+  document.querySelectorAll('.subject-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.subject === currentSubject);
+  });
+}
+
+function renderHeader() {
+  const s = getStats(currentSubject);
+  document.getElementById('hdr-prog-fill').style.width = s.pct + '%';
+  document.getElementById('hdr-prog-fill').style.background = subjectColor(currentSubject);
+  document.getElementById('hdr-prog-text').textContent = s.pct + '%';
+  document.getElementById('weak-btn').classList.toggle('active', weakPanelOpen);
+}
+
+function renderStats() {
+  const s = getStats(currentSubject);
+  const color = subjectColor(currentSubject);
+  document.getElementById('stats-bar').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Total Points</div>
+      <div class="stat-value" style="color:${color}">${s.total}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Rated</div>
+      <div class="stat-value" style="color:${s.rated===s.total?'var(--r5)':color}">${s.rated}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Unrated</div>
+      <div class="stat-value" style="color:${s.unrated===0?'var(--r5)':'var(--text-muted)'}">${s.unrated}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Weak (1-2)</div>
+      <div class="stat-value warn">${s.weak}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Mastered</div>
+      <div class="stat-value good">${s.mastered}</div>
+    </div>
+  `;
+}
+
+function renderContent() {
+  const subject = SUBJECTS[currentSubject];
+  const color = subjectColor(currentSubject);
+  let html = '';
+
+  subject.units.forEach((unit, ui) => {
+    const unitId = unit.id;
+    let unitTotal = 0, unitRated = 0;
+    unit.topics.forEach(t => {
+      t.subtopics.forEach(s => {
+        unitTotal += s.points.length;
+        unitRated += s.points.filter(p => ratings[p.id] !== undefined).length;
+      });
+    });
+    const unitPct = unitTotal > 0 ? Math.round(unitRated/unitTotal*100) : 0;
+
+    html += `
+    <div class="unit-block" id="unit_${unitId}">
+      <div class="unit-header open" onclick="toggleUnit('${unitId}')">
+        <span class="chevron" style="color:${color}">&#9654;</span>
+        <span class="unit-name">${unit.name}</span>
+        <span class="unit-prog" style="color:${color}">${unitRated}/${unitTotal} &nbsp; ${unitPct}%</span>
+      </div>
+      <div class="unit-body open" id="ubody_${unitId}">
+    `;
+
+    unit.topics.forEach(topic => {
+      const ts = getTopicStats(topic.id);
+      const tcolor = ts.pct === 100 ? 'var(--r5)' : color;
+      html += `
+      <div class="topic-block" id="topic_${topic.id}">
+        <div class="topic-header open" onclick="toggleTopic('${topic.id}')">
+          <span class="chevron">&#9654;</span>
+          <span class="topic-name">${topic.name}</span>
+          <div class="topic-meta">
+            ${topic.hours ? `<span class="topic-hours">${topic.hours}h</span>` : ''}
+            <div class="topic-prog-wrap"><div class="topic-prog-fill" style="width:${ts.pct}%;background:${tcolor}"></div></div>
+            <span class="topic-prog-text" style="color:${tcolor}">${ts.rated}/${ts.total}</span>
+          </div>
+        </div>
+        <div class="topic-body open" id="tbody_${topic.id}">
+      `;
+
+      topic.subtopics.forEach(sub => {
+        html += `<div class="subtopic-block"><div class="subtopic-name">${sub.name}</div>`;
+        sub.points.forEach(point => {
+          const r = ratings[point.id];
+          const rowStyle = r ? `background:${ratingBgColor(r)};border-radius:4px;` : '';
+          html += `
+          <div class="point-row" data-id="${point.id}" data-rating="${r || 0}" style="${rowStyle}">
+            <div class="point-bullet"></div>
+            <div class="point-text">${escHtml(point.text)}</div>
+            <div class="rating-btns">
+              ${[1,2,3,4,5].map(n => `<button class="r-btn ${r===n?'active':''}" data-r="${n}" onclick="setRating('${point.id}',${n},this)">${n}</button>`).join('')}
+            </div>
+          </div>`;
+        });
+        html += `</div>`;
+      });
+
+      html += `</div></div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderWeakPanel() {
+  if (!weakPanelOpen) return;
+  const allPoints = [];
+  ['physics','chemistry','engineering'].forEach(sk => {
+    allPoints.push(...getAllPoints(sk));
+  });
+
+  let filtered;
+  if (weakFilter === 'weak') {
+    filtered = allPoints.filter(p => ratings[p.id] !== undefined && ratings[p.id] <= 2);
+    filtered.sort((a,b) => (ratings[a.id]||0) - (ratings[b.id]||0));
+    document.getElementById('weak-panel-title').textContent = `Weak Points (${filtered.length})`;
+  } else if (weakFilter === 'unrated') {
+    filtered = allPoints.filter(p => ratings[p.id] === undefined);
+    document.getElementById('weak-panel-title').textContent = `Unrated Points (${filtered.length})`;
+  } else {
+    filtered = allPoints.filter(p => ratings[p.id] !== undefined);
+    filtered.sort((a,b) => (ratings[a.id]||0) - (ratings[b.id]||0));
+    document.getElementById('weak-panel-title').textContent = `All Rated Points (${filtered.length})`;
+  }
+
+  if (filtered.length === 0) {
+    document.getElementById('weak-list').innerHTML = `<div class="weak-empty">${weakFilter==='weak'?'No weak points. Great work.':weakFilter==='unrated'?'All points have been rated.':'No rated points yet.'}</div>`;
+    return;
+  }
+
+  let html = '';
+  let lastSubject = null;
+  filtered.forEach(p => {
+    if (p.subjectKey !== lastSubject) {
+      html += `<div class="weak-group-header" style="color:${subjectColor(p.subjectKey)}">${p.subjectName}</div>`;
+      lastSubject = p.subjectKey;
+    }
+    const r = ratings[p.id];
+    const badge = r ? `<div class="rating-badge r${r}">${r}</div>` : `<div class="rating-badge r0">-</div>`;
+    html += `
+    <div class="weak-point-row">
+      ${badge}
+      <div class="weak-point-meta">
+        <div class="weak-point-context">${p.topicName} &rsaquo; ${p.subtopicName}</div>
+        <div class="weak-point-text">${escHtml(p.text)}</div>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('weak-list').innerHTML = html;
+}
+
+// ============================================================
+// INTERACTIONS
+// ============================================================
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function switchSubject(sk) {
+  currentSubject = sk;
+  render();
+}
+
+function toggleUnit(id) {
+  const header = document.querySelector(`#unit_${id} .unit-header`);
+  const body = document.getElementById(`ubody_${id}`);
+  header.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function toggleTopic(id) {
+  const header = document.querySelector(`#topic_${id} .topic-header`);
+  const body = document.getElementById(`tbody_${id}`);
+  header.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function setRating(pointId, r, btn) {
+  const current = ratings[pointId];
+  if (current === r) {
+    delete ratings[pointId];
+  } else {
+    ratings[pointId] = r;
+  }
+  saveRatings();
+  updatePointRow(pointId, btn);
+  updateTopicProgress(pointId);
+  renderStats();
+  renderHeader();
+  if (weakPanelOpen) renderWeakPanel();
+}
+
+function updatePointRow(pointId, clickedBtn) {
+  const r = ratings[pointId];
+  const row = document.querySelector(`.point-row[data-id="${pointId}"]`);
+  if (!row) return;
+  row.dataset.rating = r || 0;
+  if (r) {
+    row.style.background = ratingBgColor(r);
+    row.style.borderRadius = '4px';
+  } else {
+    row.style.background = '';
+  }
+  row.querySelectorAll('.r-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.r) === r);
+  });
+}
+
+function updateTopicProgress(pointId) {
+  for (const sk of Object.keys(SUBJECTS)) {
+    SUBJECTS[sk].units.forEach(u => {
+      u.topics.forEach(t => {
+        const found = t.subtopics.some(s => s.points.some(p => p.id === pointId));
+        if (found) {
+          const ts = getTopicStats(t.id);
+          const color = subjectColor(sk);
+          const tcolor = ts.pct === 100 ? 'var(--r5)' : color;
+          const fill = document.querySelector(`#topic_${t.id} .topic-prog-fill`);
+          const txt = document.querySelector(`#topic_${t.id} .topic-prog-text`);
+          if (fill) { fill.style.width = ts.pct + '%'; fill.style.background = tcolor; }
+          if (txt) { txt.textContent = `${ts.rated}/${ts.total}`; txt.style.color = tcolor; }
+
+          // update unit progress
+          let unitTotal = 0, unitRated = 0;
+          u.topics.forEach(t2 => {
+            t2.subtopics.forEach(s => {
+              unitTotal += s.points.length;
+              unitRated += s.points.filter(p => ratings[p.id] !== undefined).length;
+            });
+          });
+          const unitPct = unitTotal > 0 ? Math.round(unitRated/unitTotal*100) : 0;
+          const uprog = document.querySelector(`#unit_${u.id} .unit-prog`);
+          if (uprog) uprog.textContent = `${unitRated}/${unitTotal}   ${unitPct}%`;
+        }
+      });
+    });
+  }
+}
+
+function toggleWeakPanel() {
+  weakPanelOpen = !weakPanelOpen;
+  const panel = document.getElementById('weak-panel');
+  panel.classList.toggle('visible', weakPanelOpen);
+  document.getElementById('weak-btn').classList.toggle('active', weakPanelOpen);
+  if (weakPanelOpen) {
+    renderWeakPanel();
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function setWeakFilter(f, btn) {
+  weakFilter = f;
+  document.querySelectorAll('.weak-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWeakPanel();
+}
+
+function resetSubject() {
+  if (!confirm(`Reset all ratings for ${SUBJECTS[currentSubject].name}?`)) return;
+  const pts = getAllPoints(currentSubject);
+  pts.forEach(p => delete ratings[p.id]);
+  saveRatings();
+  render();
+}
+
+// Attach subject tab handlers
+document.querySelectorAll('.subject-tab').forEach(btn => {
+  btn.addEventListener('click', () => switchSubject(btn.dataset.subject));
+});
+
+// ============================================================
+// INIT
+// ============================================================
+loadRatings();
+render();
+</script>
+</body>
+</html>
