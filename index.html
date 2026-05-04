@@ -21,12 +21,15 @@
     --ph: #38bdf8;
     --ph-bg: rgba(56,189,248,0.07);
     --ph-border: rgba(56,189,248,0.2);
-    --ch: #4ade80;
-    --ch-bg: rgba(74,222,128,0.07);
-    --ch-border: rgba(74,222,128,0.2);
+    --ch: #7f00ff;
+    --ch-bg: rgba(127,0,255,0.07);
+    --ch-border: rgba(127,0,255,0.2);
     --en: #fb923c;
     --en-bg: rgba(251,146,60,0.07);
     --en-border: rgba(251,146,60,0.2);
+    --bi: #4ade80;
+    --bi-bg: rgba(74,222,128,0.07);
+    --bi-border: rgba(74,222,128,0.2);
 
     --r1: #ef4444;
     --r1-bg: rgba(239,68,68,0.12);
@@ -125,9 +128,12 @@
   .subject-tab.active[data-subject="chemistry"] {
     color: var(--ch); background: var(--ch-bg); border-color: var(--ch-border);
   }
+  .subject-tab.active[data-subject="biology"] {
+    color: var(--bi); background: var(--bi-bg); border-color: var(--bi-border);
+  }
   .subject-tab.active[data-subject="engineering"] {
     color: var(--en); background: var(--en-bg); border-color: var(--en-border);
-  }
+  } 
 
   #header-right {
     margin-left: auto;
@@ -646,10 +652,12 @@
   /* === SUBJECT COLOR ACCENTS === */
   body[data-subject="physics"] { --accent: var(--ph); --accent-bg: var(--ph-bg); }
   body[data-subject="chemistry"] { --accent: var(--ch); --accent-bg: var(--ch-bg); }
+  body[data-subject="biology"] { --accent: var(--bi); --accent-bg: var(--bi-bg); }
   body[data-subject="engineering"] { --accent: var(--en); --accent-bg: var(--en-bg); }
 
   body[data-subject="physics"] .unit-body { border-left-color: rgba(56,189,248,0.25); }
-  body[data-subject="chemistry"] .unit-body { border-left-color: rgba(74,222,128,0.25); }
+  body[data-subject="chemistry"] .unit-body { border-left-color: rgba(127,0,255,0.25); }
+  body[data-subject="biology"] .unit-body { border-left-color: rgba(74,222,128,0.25); }
   body[data-subject="engineering"] .unit-body { border-left-color: rgba(251,146,60,0.25); }
 
   .no-results {
@@ -668,6 +676,7 @@
     <div id="subject-tabs">
       <button class="subject-tab active" data-subject="physics">Physics</button>
       <button class="subject-tab" data-subject="chemistry">Chemistry</button>
+      <button class="subject-tab" data-subject="biology">Biology</button>
       <button class="subject-tab" data-subject="engineering">Engineering</button>
     </div>
     <div id="header-right">
@@ -852,7 +861,7 @@ const SUBJECTS = {
 
   chemistry: {
     name: "Chemistry",
-    color: "#4ade80",
+    color: "#7f00ff",
     units: [
       {
         id: "ch_u3",
@@ -1046,6 +1055,139 @@ const SUBJECTS = {
                 { id: "ch_u4_t2_mm_3", text: "Apply amino acid symbols to construct and name tripeptides." },
                 { id: "ch_u4_t2_mm_4", text: "Identify that tripeptides are formed when amino acid monomers are joined by peptide bonds." },
                 { id: "ch_u4_t2_mm_5", text: "Identify that disaccharides are formed when monosaccharide monomers are joined by glycosidic bonds." }
+              ]}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+biology: {
+    name: "Biology",
+    color: "#4ade80",
+    units: [
+      {
+        id: "bio_u3",
+        name: "Unit 3: Biodiversity and the Interconnectedness of Life",
+        topics: [
+          {
+            id: "bio_u3_t1", name: "Topic 1: Biodiversity and Populations", hours: 20,
+            subtopics: [
+              { name: "Classification and Diversity", points: [
+                { id: "bio_u3_t1_cd_1", text: "Describe genetic, species and ecosystem diversity." },
+                { id: "bio_u3_t1_cd_2", text: "Describe the biological species concept and identify its limitations." },
+                { id: "bio_u3_t1_cd_3", text: "Identify the major taxa in the Linnaean system of biological classification and explain how it is used to classify and name species." },
+                { id: "bio_u3_t1_cd_4", text: "Use dichotomous keys to identify and classify organisms." }
+              ]},
+              { name: "Population Estimation and Diversity Measures", points: [
+                { id: "bio_u3_t1_pd_1", text: "Use the Lincoln index (N = M×n / m) to estimate the size of a population." },
+                { id: "bio_u3_t1_pd_2", text: "Determine the diversity of species using measures such as species richness, evenness (relative species abundance), percentage cover, percentage frequency and Simpson's diversity index, SDI = 1 − (Σn(n−1) / N(N−1))." }
+              ]},
+              { name: "Sampling Methods", points: [
+                { id: "bio_u3_t1_sm_1", text: "Describe how sampling can be used to investigate the species diversity of a given area, considering the most appropriate sampling method (random, systematic, stratified), sampling technique (quadrats, line transect, belt-transect, capture-recapture), strategies to minimise bias (size and number of samples, random-number generators, counting criteria, calibrating equipment and noting associated precision), and measure/s of diversity." }
+              ]},
+              { name: "Distribution and Abundance", points: [
+                { id: "bio_u3_t1_da_1", text: "Describe how the distribution and abundance of species in an ecosystem are influenced by biotic factors (food availability, competition for resources, predation, disease) and abiotic factors (space, shelter, availability of water, nutrients, environmental conditions)." },
+                { id: "bio_u3_t1_da_2", text: "Explain that ecosystems are composed of varied habitats, including microhabitats, which may impact the distribution of species (e.g. uniform, random or clumped), and therefore the validity and reliability of different sampling methods/techniques." },
+                { id: "bio_u3_t1_da_3", text: "Interpret data from an experiment investigating how abiotic factors affect the distribution, abundance and/or biodiversity of species in an ecosystem." },
+                { id: "bio_u3_t1_da_4", text: "Interpret data to classify and name ecosystems using Specht's classification system and the Holdridge life zone classification scheme." }
+              ]},
+              { name: "Population Growth", points: [
+                { id: "bio_u3_t1_pg_1", text: "Identify and explain different modes of population growth, including exponential growth (J-curve) and logistic growth (S-curve)." },
+                { id: "bio_u3_t1_pg_2", text: "Compare the reproductive strategies and growth curves of K- and r-strategists." },
+                { id: "bio_u3_t1_pg_3", text: "Calculate population growth rate and change using birth, death, immigration and emigration data." }
+              ]}
+            ]
+          },
+          {
+            id: "bio_u3_t2", name: "Topic 2: Functioning Ecosystems and Succession", hours: 25,
+            subtopics: [
+              { name: "Energy Flow", points: [
+                { id: "bio_u3_t2_ef_1", text: "Explain the transfer and transformation of energy as it flows through the biotic components of an ecosystem, including the conversion of light into chemical energy, production of biomass and its interactions with components of the carbon cycle, and loss of energy as heat." },
+                { id: "bio_u3_t2_ef_2", text: "Analyse food chains, energy flow diagrams and ecological pyramids to determine efficiencies of energy and biomass transfer, gross and net productivity, and loss of energy through radiation, reflection and absorption." }
+              ]},
+              { name: "Matter Cycling", points: [
+                { id: "bio_u3_t2_mc_1", text: "Describe the transfer and transformation of matter (water, carbon, nitrogen) as it cycles through ecosystems." }
+              ]},
+              { name: "Species Interactions", points: [
+                { id: "bio_u3_t2_si_1", text: "Explain the following species interactions: predation, competition, mutualism, commensalism and parasitism." },
+                { id: "bio_u3_t2_si_2", text: "Describe the concept of an ecological niche." },
+                { id: "bio_u3_t2_si_3", text: "Explain the competitive exclusion principle." },
+                { id: "bio_u3_t2_si_4", text: "Explain the critical role that keystone species play in maintaining the structure of a community." },
+                { id: "bio_u3_t2_si_5", text: "Analyse ecological data (e.g. food webs, population data) to identify keystone species, infer species interactions, and predict the outcomes of removing species from an ecosystem." }
+              ]},
+              { name: "Human Impact and Carrying Capacity", points: [
+                { id: "bio_u3_t2_hi_1", text: "Explain how overexploitation, habitat destruction, monocultures and pollution affect community structure and ecosystem functioning." },
+                { id: "bio_u3_t2_hi_2", text: "Explain how the carrying capacity of an ecosystem can be impacted by changes to biotic and abiotic factors, including climatic events." }
+              ]},
+              { name: "Ecological Succession", points: [
+                { id: "bio_u3_t2_es_1", text: "Describe the process of ecological succession." },
+                { id: "bio_u3_t2_es_2", text: "Distinguish between primary and secondary succession." },
+                { id: "bio_u3_t2_es_3", text: "Identify the features of pioneer species that make them effective colonisers." },
+                { id: "bio_u3_t2_es_4", text: "Explain successional changes, with reference to species interactions, abiotic factors, K- and r-selected species, biodiversity and biomass." },
+                { id: "bio_u3_t2_es_5", text: "Interpret ecological data to compare ecosystems across spatial and temporal scales." }
+              ]}
+            ]
+          }
+        ]
+      },
+      {
+        id: "bio_u4",
+        name: "Unit 4: Heredity and Continuity of Life",
+        topics: [
+          {
+            id: "bio_u4_t1", name: "Topic 1: Genetics and Heredity", hours: 30,
+            subtopics: [
+              { name: "DNA, Genes and Chromosomes", points: [
+                { id: "bio_u4_t1_dg_1", text: "Describe the structure and function of DNA, genes and chromosomes in prokaryotes and eukaryotes, including helical structure, nucleotide composition (nitrogenous base + sugar + phosphate), complementary base pairing, hydrogen bonds; introns and exons, promoter region; homologous chromosomes (i.e. sister chromatids, centromeres, telomeres, gene loci, alleles), role of histones; circular chromosomes (i.e. prokaryotes, mitochondria, chloroplasts) and plasmids." },
+                { id: "bio_u4_t1_dg_2", text: "Describe the process of DNA replication with reference to helicase, DNA polymerase and the joining of Okazaki fragments." },
+                { id: "bio_u4_t1_dg_3", text: "Explain how errors in DNA replication and damage by physical/chemical factors in the environment can lead to point and frameshift mutations." }
+              ]},
+              { name: "Meiosis and Variation", points: [
+                { id: "bio_u4_t1_mv_1", text: "Describe the process of meiosis and explain how crossing over, independent assortment and random fertilisation produce variation in the genotypes of offspring." },
+                { id: "bio_u4_t1_mv_2", text: "Compare spermatogenesis and oogenesis." },
+                { id: "bio_u4_t1_mv_3", text: "Explain how errors in meiosis can lead to chromosomal abnormalities such as insertions, deletions, duplications, inversions, translocations and aneuploidy." },
+                { id: "bio_u4_t1_mv_4", text: "Identify ploidy changes within a human karyotype to predict a genetic disorder." }
+              ]},
+              { name: "Protein Synthesis", points: [
+                { id: "bio_u4_t1_ps_1", text: "Explain the process of protein synthesis in terms of transcription of a gene into messenger RNA in the nucleus; RNA processing (5' cap, RNA splicing, poly-A tail); and translation of mRNA into an amino acid sequence at the ribosome, referring to transfer RNA, codons and anticodons." },
+                { id: "bio_u4_t1_ps_2", text: "Determine the effect of point and frameshift mutations on polypeptides using the genetic code." }
+              ]},
+              { name: "Gene Expression", points: [
+                { id: "bio_u4_t1_ge_1", text: "Explain how gene expression is regulated in response to environmental signals and to allow for cell differentiation, including chemical tags that affect chromatin structure (heterochromatin vs. euchromatin) and proteins that bind to the promoter region of a gene (transcription factors)." },
+                { id: "bio_u4_t1_ge_2", text: "Explain how genes from the HOX transcription factor family regulate morphology." }
+              ]},
+              { name: "Patterns of Inheritance", points: [
+                { id: "bio_u4_t1_pi_1", text: "Describe dominant, recessive, autosomal, sex-linked, polygenic and multiple-allele inheritance." },
+                { id: "bio_u4_t1_pi_2", text: "Infer patterns of inheritance and predict frequencies of genotypes and phenotypes from genetic data, including histograms (polygenic inheritance), pedigrees (dominant/recessive, autosomal/sex-linked), and Punnett squares (dominant/recessive, autosomal/sex-linked and multiple-allele inheritance)." }
+              ]},
+              { name: "Recombinant DNA and DNA Profiling", points: [
+                { id: "bio_u4_t1_rd_1", text: "Describe the process of making recombinant DNA, including the role of restriction enzymes, plasmids and DNA ligase." },
+                { id: "bio_u4_t1_rd_2", text: "Describe how PCR and gel electrophoresis are used in DNA profiling and explain how differences in DNA allow for characteristic banding patterns." },
+                { id: "bio_u4_t1_rd_3", text: "Interpret DNA profiles from gel electrophoresis." }
+              ]}
+            ]
+          },
+          {
+            id: "bio_u4_t2", name: "Topic 2: Continuity of Life on Earth", hours: 15,
+            subtopics: [
+              { name: "Microevolution", points: [
+                { id: "bio_u4_t2_me_1", text: "Distinguish between microevolution and macroevolution." },
+                { id: "bio_u4_t2_me_2", text: "Explain microevolutionary change through the main processes of mutation, gene flow and genetic drift." },
+                { id: "bio_u4_t2_me_3", text: "Explain natural selection and identify the three main types of phenotypic selection: stabilising, directional and disruptive." },
+                { id: "bio_u4_t2_me_4", text: "Calculate allele frequencies from genotype data." },
+                { id: "bio_u4_t2_me_5", text: "Analyse data to determine the effect of a selection pressure on a population, recognising that selection for an allele can be positive or negative." }
+              ]},
+              { name: "Macroevolution and Speciation", points: [
+                { id: "bio_u4_t2_ms_1", text: "Describe how macroevolutionary changes result from the accumulation of microevolutionary changes using examples of divergent, convergent, parallel and coevolution." },
+                { id: "bio_u4_t2_ms_2", text: "Explain how geographic, temporal and spatial isolation influence gene flow and may lead to allopatric, sympatric and parapatric speciation." },
+                { id: "bio_u4_t2_ms_3", text: "Explain why populations with reduced genetic diversity face increased risk of extinction." }
+              ]},
+              { name: "Evidence for Evolution", points: [
+                { id: "bio_u4_t2_ee_1", text: "Explain how comparative genomics provides evidence for the theory of evolution and how conserved sequences can be used to date divergence." },
+                { id: "bio_u4_t2_ee_2", text: "Infer species relatedness from cladograms, phylograms and molecular sequence data." },
+                { id: "bio_u4_t2_ee_3", text: "Determine episodes of evolutionary radiation and mass extinctions from an evolutionary timescale of life on Earth (approximately 3.5 billion years)." }
               ]}
             ]
           }
@@ -1344,7 +1486,7 @@ function renderContent() {
 function renderWeakPanel() {
   if (!weakPanelOpen) return;
   const allPoints = [];
-  ['physics','chemistry','engineering'].forEach(sk => {
+  ['physics','chemistry','biology','engineering'].forEach(sk => {
     allPoints.push(...getAllPoints(sk));
   });
 
