@@ -672,7 +672,7 @@
 
 <div id="header">
   <div id="header-inner">
-    <div id="logo">EXAM <span>TRACKER</span></div>
+    <div id="logo">EXAM TRACKER</div>
     <div id="subject-tabs">
       <button class="subject-tab active" data-subject="physics">Physics</button>
       <button class="subject-tab" data-subject="chemistry">Chemistry</button>
@@ -1390,6 +1390,15 @@ function renderHeader() {
 function renderStats() {
   const s = getStats(currentSubject);
   const color = subjectColor(currentSubject);
+  const lookupName = String(currentSubject).toLowerCase().trim();
+  const qcaa = {
+    "physics": ["https://www.qcaa.qld.edu.au/senior/senior-subjects/syllabuses/sciences/physics", "https://www.qcaa.qld.edu.au/downloads/senior-qce/sciences/snr_physics_25_formula_data_book.pdf"],
+    "chemistry": ["https://www.qcaa.qld.edu.au/senior/senior-subjects/syllabuses/sciences/chemistry", "https://www.qcaa.qld.edu.au/downloads/senior-qce/sciences/snr_chemistry_25_formula_data_book.pdf"],
+    "biology": ["https://www.qcaa.qld.edu.au/senior/senior-subjects/syllabuses/sciences/biology", "https://www.qcaa.qld.edu.au/senior/senior-subjects/syllabuses/sciences/biology"],
+    "engineering": ["https://www.qcaa.qld.edu.au/senior/senior-subjects/syllabuses/technologies/engineering", "https://www.qcaa.qld.edu.au/downloads/senior-qce/technologies/snr_engineering_25_formula_sheet.pdf"]
+  };
+  const links = qcaa[lookupName] || ["https://www.qcaa.qld.edu.au/senior/senior-subjects/syllabuses", "https://www.qcaa.qld.edu.au/senior/senior-subjects/syllabuses"];
+
   document.getElementById('stats-bar').innerHTML = `
     <div class="stat-card">
       <div class="stat-label">Total Points</div>
@@ -1410,6 +1419,15 @@ function renderStats() {
     <div class="stat-card">
       <div class="stat-label">Mastered</div>
       <div class="stat-value good">${s.mastered}</div>
+    </div>
+       <div class="stat-card" style="cursor:pointer; " onclick="event.stopPropagation(); window.open('${links[0]}','_blank');">
+      <div class="stat-label" style="color:#00a8ff">QCAA</div>
+      <div class="stat-value" style="font-size:1.1rem">Syllabus</div>
+    </div>
+
+    <div class="stat-card" style="cursor:pointer; " onclick="event.stopPropagation(); window.open('${links[1]}','_blank');">
+      <div class="stat-label" style="color:#9c88ff">QCAA</div>
+      <div class="stat-value" style="font-size:1.1rem">Formula Sheet</div>
     </div>
   `;
 }
